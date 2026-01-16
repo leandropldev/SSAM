@@ -5,6 +5,7 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/ssam/pom.xml" />
+        <option value="$PROJECT_DIR$/ssam-app/pom.xml" />
       </list>
     </option>
   </component>
