@@ -5,19 +5,19 @@ import com.valeo.ssam.entity.StatusEnum;
 
 import java.util.UUID;
 
-public record AssetTokenRecordResponse (
+public record AssetTokenResponse(
         UUID id,
         StatusEnum status,
         String ownerId,
         Long updateCounter
 ) {
 
-    public static AssetTokenRecordResponse fromEntity(AssetToken entity) {
+    public static AssetTokenResponse fromEntity(AssetToken entity) {
         if (entity == null) {
             return null;
         }
 
-        return new AssetTokenRecordResponse(
+        return new AssetTokenResponse(
             entity.getId(),
             entity.getStatus(),
             entity.getOwnerId(),

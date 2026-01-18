@@ -3,8 +3,8 @@ package com.valeo.ssam.service;
 import com.valeo.ssam.entity.AssetToken;
 import com.valeo.ssam.entity.StatusEnum;
 import com.valeo.ssam.exception.GenericException;
-import com.valeo.ssam.model.AssetTokenRecordRequest;
-import com.valeo.ssam.model.AssetTokenRecordResponse;
+import com.valeo.ssam.model.CreateAssetToken;
+import com.valeo.ssam.model.AssetTokenResponse;
 import com.valeo.ssam.repository.AssetTokenRepository;
 import lombok.NonNull;
 import org.springframework.http.ResponseEntity;
@@ -24,14 +24,20 @@ public class AssetTokenService {
     }
 
     @Transactional
-    public void createNewToken(AssetTokenRecordRequest request) {
-        repository.save(request.toEntity());
+    public UUID createNewToken(CreateAssetToken request) {
+        AssetToken entity = new AssetToken();
+        entity.setStatus(StatusEnum.ACTIVE);
+        entity.setOwnerId(request.ownerId());
+        entity.setConfidentialData(request.confidentialData());
+        entity.setSlotBitmap((byte) 0x00); //by default token starts with 8 free slots
+        entity.setUpdateCounter(0L);
+        return repository.save(entity).getId();
     }
 
     @Transactional
-    public List<AssetTokenRecordResponse> listAllTokens(){
+    public List<AssetTokenResponse> listAllTokens(){
         return repository.findAll().stream()
-                .map(AssetTokenRecordResponse::fromEntity)
+                .map(AssetTokenResponse::fromEntity)
                 .toList();
     }
 
@@ -42,8 +48,10 @@ public class AssetTokenService {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @Transactional
     public void suspendToken(UUID id){
-        AssetToken token = repository.findById(id).orElseThrow(() -> new RuntimeException("Invalid token ID"));
+        AssetToken token = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Invalid token ID"));
         token.setStatus(StatusEnum.SUSPENDED);
         repository.save(token);
     }
@@ -59,17 +67,18 @@ public class AssetTokenService {
                 parent.setSlotBitmap((byte) (parent.getSlotBitmap() | (1 << i)));
 
                 AssetToken child = new AssetToken();
-                child.setId(UUID.randomUUID());
                 child.setOwnerId(friendEmail);
                 child.setStatus(StatusEnum.ACTIVE);
+                child.setConfidentialData(parent.getConfidentialData());
                 child.setParent(parent);
+                child.setUpdateCounter(0L);
 
                 parent.getChildren().add(child);
                 repository.save(parent);
                 return child;
             }
         }
-        throw new RuntimeException("No available slots");
+        throw new GenericException("No available slots");
     }
 
     @Transactional

@@ -1,5 +1,6 @@
 package com.valeo.ssam.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.valeo.ssam.converter.ConfidentialDataConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -17,7 +18,7 @@ import java.util.UUID;
 public class AssetToken {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Enumerated(EnumType.STRING)
@@ -28,7 +29,7 @@ public class AssetToken {
     @Convert(converter = ConfidentialDataConverter.class)
     private String confidentialData;
 
-    private byte slotBitmap; // 8 bits children slots
+    private byte slotBitmap;
 
     @Version //Every time the entity change, the update counter will get a new version
     private Long updateCounter;
@@ -38,5 +39,6 @@ public class AssetToken {
     private List<AssetToken> children;
 
     @ManyToOne
+    @JsonIgnore
     private AssetToken parent;
 }

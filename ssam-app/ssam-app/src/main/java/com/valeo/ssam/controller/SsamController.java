@@ -1,11 +1,10 @@
 package com.valeo.ssam.controller;
 
 import com.valeo.ssam.entity.AssetToken;
-import com.valeo.ssam.model.AssetTokenRecordRequest;
-import com.valeo.ssam.model.AssetTokenRecordResponse;
+import com.valeo.ssam.model.AssetTokenResponse;
+import com.valeo.ssam.model.CreateAssetToken;
 import com.valeo.ssam.service.AssetTokenService;
 import lombok.NonNull;
-import lombok.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,22 +22,21 @@ public class SsamController {
     }
 
     @PostMapping
-    public void createToken(@RequestBody AssetTokenRecordRequest request){
-        service.createNewToken(request);
+    public ResponseEntity<@NonNull UUID> createToken(@RequestBody CreateAssetToken request){
+        return ResponseEntity.ok(service.createNewToken(request));
     }
 
     @GetMapping
-    public ResponseEntity<@NonNull List<AssetTokenRecordResponse>> listTokens() {
+    public ResponseEntity<@NonNull List<AssetTokenResponse>> listTokens() {
         return ResponseEntity.ok(service.listAllTokens());
     }
 
-    // 🔹 Obter token por ID
     @GetMapping("/{id}")
     public ResponseEntity<@NonNull AssetToken> getToken(@PathVariable UUID id) {
         return service.getAssetTokenById(id);
     }
 
-    // 🔹 Compartilhar token com amigo
+    //TODO: implement a mapper to prevent infinity loop parent->child->parent
     @PostMapping("/{parentId}/share")
     public ResponseEntity<@NonNull AssetToken> shareToken(
             @PathVariable UUID parentId,
@@ -47,15 +45,14 @@ public class SsamController {
         return ResponseEntity.ok(child);
     }
 
-    // 🔹 Suspender token
     //TODO: button frontend <Suspend>
-    @PostMapping("/{id}/suspend")
+    @PatchMapping("/{id}/suspend")
     public ResponseEntity<@NonNull Void> suspendToken(@PathVariable UUID id) {
         service.suspendToken(id);
         return ResponseEntity.ok().build();
     }
 
-    // 🔹 Terminar token (com cascata)
+    //TODO: IMPLEMENT A LOCALDATETIME TO AssetToken so it can track IN_TERMINATION timelife
     //TODO: button frontend <Terminate>
     @PostMapping("/{id}/terminate")
     public ResponseEntity<@NonNull Void> terminateToken(@PathVariable UUID id) {
