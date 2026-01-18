@@ -1,4 +1,4 @@
-package com.valeo.ssam.model;
+package com.valeo.ssam.entity;
 
 public enum StatusEnum {
     INACTIVE,

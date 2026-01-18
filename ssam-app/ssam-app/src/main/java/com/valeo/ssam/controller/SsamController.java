@@ -1,8 +1,11 @@
 package com.valeo.ssam.controller;
 
-import com.valeo.ssam.model.AssetToken;
+import com.valeo.ssam.entity.AssetToken;
+import com.valeo.ssam.model.AssetTokenRecordRequest;
+import com.valeo.ssam.model.AssetTokenRecordResponse;
 import com.valeo.ssam.service.AssetTokenService;
 import lombok.NonNull;
+import lombok.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,10 +22,13 @@ public class SsamController {
         this.service = service;
     }
 
-    // 🔹 Listar todos os tokens
-    //TODO: criar um mapper para mostrar somente os campos do frontend
+    @PostMapping
+    public void createToken(@RequestBody AssetTokenRecordRequest request){
+        service.createNewToken(request);
+    }
+
     @GetMapping
-    public ResponseEntity<@NonNull List<AssetToken>> listTokens() {
+    public ResponseEntity<@NonNull List<AssetTokenRecordResponse>> listTokens() {
         return ResponseEntity.ok(service.listAllTokens());
     }
 

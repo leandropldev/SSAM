@@ -1,6 +1,6 @@
 package com.valeo.ssam.repository;
 
-import com.valeo.ssam.model.AssetToken;
+import com.valeo.ssam.entity.AssetToken;
 import jakarta.persistence.LockModeType;
 import lombok.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;

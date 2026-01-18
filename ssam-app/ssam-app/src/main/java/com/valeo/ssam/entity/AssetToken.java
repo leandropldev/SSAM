@@ -1,4 +1,4 @@
-package com.valeo.ssam.model;
+package com.valeo.ssam.entity;
 
 import com.valeo.ssam.converter.ConfidentialDataConverter;
 import jakarta.persistence.*;

@@ -1,7 +1,10 @@
 package com.valeo.ssam.service;
 
-import com.valeo.ssam.model.AssetToken;
-import com.valeo.ssam.model.StatusEnum;
+import com.valeo.ssam.entity.AssetToken;
+import com.valeo.ssam.entity.StatusEnum;
+import com.valeo.ssam.exception.GenericException;
+import com.valeo.ssam.model.AssetTokenRecordRequest;
+import com.valeo.ssam.model.AssetTokenRecordResponse;
 import com.valeo.ssam.repository.AssetTokenRepository;
 import lombok.NonNull;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +24,15 @@ public class AssetTokenService {
     }
 
     @Transactional
-    public List<AssetToken> listAllTokens(){
-        return repository.findAll();
+    public void createNewToken(AssetTokenRecordRequest request) {
+        repository.save(request.toEntity());
+    }
+
+    @Transactional
+    public List<AssetTokenRecordResponse> listAllTokens(){
+        return repository.findAll().stream()
+                .map(AssetTokenRecordResponse::fromEntity)
+                .toList();
     }
 
     @Transactional
@@ -40,9 +50,10 @@ public class AssetTokenService {
 
     @Transactional
     public AssetToken shareToken(UUID parentId, String friendEmail) {
-        AssetToken parent = repository.findById(parentId).get();
+        AssetToken parent = repository.findById(parentId)
+                    .orElseThrow(() -> new GenericException("Invalid TokenID"));
 
-        // Encontrar primeiro slot livre
+        // bitmask logic
         for (int i = 0; i < 8; i++) {
             if ((parent.getSlotBitmap() & (1 << i)) == 0) {
                 parent.setSlotBitmap((byte) (parent.getSlotBitmap() | (1 << i)));
@@ -63,7 +74,8 @@ public class AssetTokenService {
 
     @Transactional
     public void terminateToken(UUID tokenId) {
-        AssetToken token = repository.findById(tokenId).get();
+        AssetToken token = repository.findById(tokenId)
+                .orElseThrow(() -> new GenericException("Invalid TokenID!"));
         token.setStatus(StatusEnum.TERMINATED);
 
         // Cascading revocation
