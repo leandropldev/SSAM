@@ -3,9 +3,12 @@ package com.valeo.ssam.service;
 import com.valeo.ssam.model.AssetToken;
 import com.valeo.ssam.model.StatusEnum;
 import com.valeo.ssam.repository.AssetTokenRepository;
+import lombok.NonNull;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -15,6 +18,24 @@ public class AssetTokenService {
 
     public AssetTokenService(AssetTokenRepository repository) {
         this.repository = repository;
+    }
+
+    @Transactional
+    public List<AssetToken> listAllTokens(){
+        return repository.findAll();
+    }
+
+    @Transactional
+    public ResponseEntity<@NonNull AssetToken> getAssetTokenById(UUID id) {
+        return repository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    public void suspendToken(UUID id){
+        AssetToken token = repository.findById(id).orElseThrow(() -> new RuntimeException("Invalid token ID"));
+        token.setStatus(StatusEnum.SUSPENDED);
+        repository.save(token);
     }
 
     @Transactional

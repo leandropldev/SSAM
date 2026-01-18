@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  ssam-db:
+    image: postgres:16
+    container_name: ssam-db
+    environment:
+      POSTGRES_DB: ssamdb
+      POSTGRES_USER: ssamuser
+      POSTGRES_PASSWORD: ssampass
+    ports:
+      - "5432:5432"
+    volumes:
+      - ssam-db-data:/var/lib/postgresql/data
+    networks:
+      - ssam-net
+
+  ssam-app:
+    build:
+      context: ./ssam-app/ssam-app
+      dockerfile: Dockerfile
+    container_name: ssam-app
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      - ssam-db
+    ports:
+      - "8080:8080"
+    networks:
+      - ssam-net
+
+volumes:
+  ssam-db-data:
+
+networks:
+  ssam-net:

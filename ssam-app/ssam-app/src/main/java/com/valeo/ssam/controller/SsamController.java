@@ -1,8 +1,6 @@
 package com.valeo.ssam.controller;
 
 import com.valeo.ssam.model.AssetToken;
-import com.valeo.ssam.model.StatusEnum;
-import com.valeo.ssam.repository.AssetTokenRepository;
 import com.valeo.ssam.service.AssetTokenService;
 import lombok.NonNull;
 import org.springframework.http.ResponseEntity;
@@ -16,25 +14,22 @@ import java.util.UUID;
 public class SsamController {
 
     private final AssetTokenService service;
-    private final AssetTokenRepository repository;
 
-    public SsamController(AssetTokenService service, AssetTokenRepository repository) {
+    public SsamController(AssetTokenService service) {
         this.service = service;
-        this.repository = repository;
     }
 
     // 🔹 Listar todos os tokens
+    //TODO: criar um mapper para mostrar somente os campos do frontend
     @GetMapping
     public ResponseEntity<@NonNull List<AssetToken>> listTokens() {
-        return ResponseEntity.ok(repository.findAll());
+        return ResponseEntity.ok(service.listAllTokens());
     }
 
     // 🔹 Obter token por ID
     @GetMapping("/{id}")
     public ResponseEntity<@NonNull AssetToken> getToken(@PathVariable UUID id) {
-        return repository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return service.getAssetTokenById(id);
     }
 
     // 🔹 Compartilhar token com amigo
@@ -47,19 +42,18 @@ public class SsamController {
     }
 
     // 🔹 Suspender token
+    //TODO: button frontend <Suspend>
     @PostMapping("/{id}/suspend")
     public ResponseEntity<@NonNull Void> suspendToken(@PathVariable UUID id) {
-        AssetToken token = repository.findById(id).orElseThrow();
-        token.setStatus(StatusEnum.SUSPENDED);
-        repository.save(token);
+        service.suspendToken(id);
         return ResponseEntity.ok().build();
     }
 
     // 🔹 Terminar token (com cascata)
+    //TODO: button frontend <Terminate>
     @PostMapping("/{id}/terminate")
     public ResponseEntity<@NonNull Void> terminateToken(@PathVariable UUID id) {
         service.terminateToken(id);
         return ResponseEntity.ok().build();
     }
-
 }
