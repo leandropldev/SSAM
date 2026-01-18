@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<@NonNull ErrorResponseModel> handleGenericAPIException(GenericException ex) {
         ErrorResponseModel error = new ErrorResponseModel(
                 ex.getMessage(),
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                HttpStatus.BAD_REQUEST.value(),
                 LocalDateTime.now()
         );
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);

@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,6 +34,8 @@ public class AssetToken {
 
     @Version //Every time the entity change, the update counter will get a new version
     private Long updateCounter;
+
+    private Instant lastStatusChange;
 
     // Relation to child's token
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)

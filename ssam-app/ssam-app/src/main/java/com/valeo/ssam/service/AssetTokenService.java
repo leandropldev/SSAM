@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +32,7 @@ public class AssetTokenService {
         entity.setConfidentialData(request.confidentialData());
         entity.setSlotBitmap((byte) 0x00); //by default token starts with 8 free slots
         entity.setUpdateCounter(0L);
+        entity.setLastStatusChange(Instant.now());
         return repository.save(entity).getId();
     }
 
@@ -57,7 +59,7 @@ public class AssetTokenService {
     }
 
     @Transactional
-    public AssetToken shareToken(UUID parentId, String friendEmail) {
+    public UUID shareToken(UUID parentId, String friendEmail) {
         AssetToken parent = repository.findById(parentId)
                     .orElseThrow(() -> new GenericException("Invalid TokenID"));
 
@@ -72,10 +74,10 @@ public class AssetTokenService {
                 child.setConfidentialData(parent.getConfidentialData());
                 child.setParent(parent);
                 child.setUpdateCounter(0L);
+                child.setLastStatusChange(Instant.now());
 
                 parent.getChildren().add(child);
-                repository.save(parent);
-                return child;
+                return repository.save(parent).getId();
             }
         }
         throw new GenericException("No available slots");
@@ -88,7 +90,10 @@ public class AssetTokenService {
         token.setStatus(StatusEnum.TERMINATED);
 
         // Cascading revocation
-        token.getChildren().forEach(child -> child.setStatus(StatusEnum.IN_TERMINATION));
+        token.getChildren().forEach(child -> {
+            child.setStatus(StatusEnum.IN_TERMINATION);
+            child.setLastStatusChange(Instant.now());
+        });
 
         repository.save(token);
     }

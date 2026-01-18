@@ -23,12 +23,12 @@ public class TokenCleanupTaskService {
     @Scheduled(fixedRate = 30000) //run at each 30 sec
     public void cleanup() {
         log.info("Starting a new cleanup service.");
+        Instant cutoff = Instant.now().minusSeconds(60);
         List<AssetToken> tokens = repository.findAll();
         tokens.stream()
                 .filter(t -> t.getStatus() == StatusEnum.IN_TERMINATION)
                 .filter(t -> t.getUpdateCounter() != null &&
-                        Instant.now().minusSeconds(60)
-                                .isAfter(Instant.ofEpochSecond(t.getUpdateCounter())))
+                        t.getLastStatusChange().isBefore(cutoff))
                 .forEach(repository::delete);
     }
 
