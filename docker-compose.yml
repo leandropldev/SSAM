@@ -28,6 +28,19 @@ services:
       - "8080:8080"
     networks:
       - ssam-net
+      
+  ssam-client:
+    build:
+      context: ./ssam-client
+      dockerfile: Dockerfile
+    container_name: ssam-client
+    ports:
+      - "4200:4200"
+    networks:
+      - ssam-net
+    volumes:
+      - ./ssam-client:/app
+      - /app/node_modules
 
 volumes:
   ssam-db-data:

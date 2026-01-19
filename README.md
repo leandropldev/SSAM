@@ -5,7 +5,6 @@ The system ensures data security, lifecycle management, and automatic cleanup of
 This project exposes a REST API that allows clients to:
 - Create new secure asset tokens
 - List all tokens
-- Retrieve a token by ID
 - Share a token with a friend (slot allocation)
 - Suspend a token
 - Terminate a token (with cascading revocation to child tokens)
@@ -20,7 +19,6 @@ The application uses PostgreSQL as its database and provides full OpenAPI/Swagge
 - Automatic cleanup of expired tokens via scheduled tasks
 - OpenAPI documentation available at /swagger-ui.html
 - Docker‑ready for local development
-
 
 
 📦 Running the Application Locally
@@ -46,8 +44,10 @@ From the root directory of the project, run:
 This will:
 - Start a PostgreSQL 16 database container
 - Build and start the SSAM Spring Boot application
+- Install and start the SSAM Angular Client
 - Expose:
 - API on http://localhost:8080
+- Client on http://localhost:4200/
 - Swagger UI on http://localhost:8080/swagger-ui.html
 
 📘 API Documentation
@@ -64,14 +64,20 @@ http://localhost:8080/v3/api-docs
 
 To execute unit tests locally:
 - mvn clean test
+- npx jest
 
 
 
 🛠️ Technologies Used
 - Java 21
+- Typescript 5.9.2
+- Angular 21
+- Signals
+- Forms
 - Spring Boot 3
 - Spring Data JPA
 - PostgreSQL 16
 - Docker & Docker Compose
 - Springdoc OpenAPI
 - JUnit 5 & Mockito
+- Jest
