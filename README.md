@@ -11,6 +11,7 @@ This project exposes a REST API that allows clients to:
 - Terminate a token (with cascading revocation to child tokens)
 The application uses PostgreSQL as its database and provides full OpenAPI/Swagger documentation.
 
+
 🚀 Features
 - AES‑256 encryption for confidential token data
 - Bitmask slot allocation for sharing tokens
@@ -20,15 +21,14 @@ The application uses PostgreSQL as its database and provides full OpenAPI/Swagge
 - OpenAPI documentation available at /swagger-ui.html
 - Docker‑ready for local development
 
+
+
 📦 Running the Application Locally
 Below are the steps required to run the SSAM application on your machine using Docker.
 
 1. Clone the Repository
-git clone https://github.com/<your-org>/<your-repo>.git
-cd <your-repo>
-
-
-Replace <your-org> and <your-repo> with the actual repository path.
+- git clone https://github.com/leandropldev/SSAM.git
+- cd SSAM
 
 2. Prepare Docker Environment
 Ensure you have the following installed:
@@ -38,12 +38,10 @@ Verify installation:
 docker --version
 docker compose version
 
-
-
 3. Run the Application with Docker Compose
 From the root directory of the project, run:
-docker compose up --build
 
+- docker compose up --build
 
 This will:
 - Start a PostgreSQL 16 database container
@@ -54,18 +52,18 @@ This will:
 
 📘 API Documentation
 Once the application is running, you can access:
+
 Swagger UI
 http://localhost:8080/swagger-ui.html
-
 
 OpenAPI JSON
 http://localhost:8080/v3/api-docs
 
 
-
 🧪 Running Tests
+
 To execute unit tests locally:
-mvn clean test
+- mvn clean test
 
 
 
