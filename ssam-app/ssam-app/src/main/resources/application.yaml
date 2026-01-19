@@ -5,7 +5,7 @@ spring:
   application:
     name: ssam
   datasource:
-    url: jdbc:postgresql://localhost:5432/ssamdb
+    url: jdbc:postgresql://ssam-db:5432/ssamdb
     username: ssamuser
     password: ssampass
   jpa:
