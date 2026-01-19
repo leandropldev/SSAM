@@ -22,6 +22,7 @@ The application uses PostgreSQL as its database and provides full OpenAPI/Swagge
 
 
 📦 Running the Application Locally
+
 Below are the steps required to run the SSAM application on your machine using Docker.
 
 1. Clone the Repository
